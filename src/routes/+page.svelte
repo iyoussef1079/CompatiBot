@@ -14,12 +14,6 @@
     }
 </script>
 
-<style>
-  .select-container {
-    width: 100%;
-  }
-</style>
-
 <div class="">
     <div class="">
 
