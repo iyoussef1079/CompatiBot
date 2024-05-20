@@ -12,11 +12,14 @@
 	import css from 'highlight.js/lib/languages/css';
 	import javascript from 'highlight.js/lib/languages/javascript';
 	import typescript from 'highlight.js/lib/languages/typescript';
+	import shell from 'highlight.js/lib/languages/shell';
+	import 'highlight.js/styles/github-dark.css';
 
 	hljs.registerLanguage('xml', xml);
 	hljs.registerLanguage('css', css);
 	hljs.registerLanguage('javascript', javascript);
 	hljs.registerLanguage('typescript', typescript);
+	hljs.registerLanguage('shell', shell);
 	storeHighlightJs.set(hljs);
 
 	// Floating UI for Popups

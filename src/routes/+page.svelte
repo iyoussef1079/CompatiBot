@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { ListBox, ListBoxItem, getToastStore, type ToastSettings } from '@skeletonlabs/skeleton';
+    import { CodeBlock, ListBox, ListBoxItem, getToastStore, type ToastSettings } from '@skeletonlabs/skeleton';
 
     const toastStore = getToastStore();
 
@@ -10,6 +10,7 @@
     let selectedGPU: string | null = null;
     let selectedPyTorch: string | null = null;
     let selectedCuda: string | null = null;
+    let displayCode: string | null = null;
 
     function checkCompatibility() {
         if (selectedGPU == null || selectedPyTorch == null || selectedCuda == null) {
@@ -19,11 +20,33 @@
             };
             toastStore.trigger(t);
         } else {
-            const t: ToastSettings = {
-                message: 'Currently, the selected GPU, PyTorch version, and Cuda version are compatible.',
-                background: 'variant-filled-success',
-            };
-            toastStore.trigger(t);
+            fetchCodeFromAPI(selectedGPU, selectedPyTorch, selectedCuda);
+        }
+    }
+
+    async function fetchCodeFromAPI(gpu: string, pytorch: string, cuda: string) {
+        const apiUrl = '/api/get-compatibility-code';
+        try {
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ gpu, pytorch, cuda })
+            });
+
+            if (!response.ok) {
+                throw new Error('An unexpected error occurred while verifying compatibility.');
+            }
+
+            const data = await response.json();
+            displayCode = data.code;
+        } catch (error: any) {
+            toastStore.trigger({
+                message: error.message || 'An unexpected error occurred while verifying compatibility.',
+                background: 'variant-filled-error',
+            });
+            displayCode = null;
         }
     }
 </script>
@@ -69,4 +92,8 @@
                 <span>Test Compatibility</span>
             </button>
     </label>
+
+    {#if displayCode}
+        <CodeBlock language="shell" code={displayCode}></CodeBlock>
+    {/if}
 </div>
